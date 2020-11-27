@@ -1,0 +1,14 @@
+---
+- hosts: dev
+  become: yes
+  become_user: root
+  vars:
+    nameofu: test
+  tasks:
+    - name: Remove an existing user
+      user: name={{ nameofu }} state=absent remove=yes
+      register: userrem
+    - debug: msg=" Username {{ nameofu }} has been removed from  {{ ansible_hostname }}"
+      when: userrem.changed
+    - debug: var=userrem
+  

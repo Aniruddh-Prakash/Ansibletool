@@ -1,0 +1,16 @@
+---
+- hosts: dev
+  become: true
+  become_user: root
+  vars:
+    groupname: newgrp
+    groupid: 
+  tasks:
+    - name: create a new group
+      group: name={{ groupname }} gid={{ groupid }} state=present
+      register: groupadd
+    - debug: msg= " Group groupname has been created on {{ ansible_host }}"
+      when: groupadd.changed
+    - debug: msg=" group already exists on {{ ansible_host }}"
+      when: groupadd.unchanged
+      

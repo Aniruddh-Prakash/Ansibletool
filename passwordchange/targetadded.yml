@@ -1,0 +1,21 @@
+---
+- hosts: dev
+  become: true
+  become_user: root
+  vars:
+    password: passw
+    username: usrname
+  tasks:
+    - name: Check if the user exists
+      shell: id {{ username }}
+      ignore_errors: yes
+      register: usercheck
+    - debug: msg="The user {{ username }} does not exist on {{ ansible_host }}"
+      when: usercheck.rc != 0
+    - name: Change the user password
+      user: user={{ username }} update_password=always password={{ password }}
+      register: passchange
+      when: usercheck.rc == 0
+
+    - debug: msg=" the password was successfully changed on {{ ansible_hostname }}"
+      when: passchange.changed
